@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.1)), url('static/LALE_main.webp');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: black; /* Changed text color to black */
+            position: relative; /* Added relative positioning */
+        }
+
+        #iqhb {
+            position: absolute; /* Position the IQHB text absolutely */
+            top: 20px; /* Adjust top position */
+            left: 20px; /* Adjust left position */
+            font-size: 20px; /* Adjust font size */
+        }
+
+        form {
+            text-align: center;
+        }
+
+        form > * {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: inline-block;
+            width: 120px;
+            text-align: right;
+            font-size: 18px;
+            color: black; /* Changed text color to black */
+        }
+
+        input {
+            width: 250px;
+            font-size: 16px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            color: black; /* Changed text color to black */
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        button {
+            font-size: 18px;
+            padding: 12px 20px;
+            border-radius: 5px;
+            border: none;
+            background-color: #007bff;
+            color: black; /* Changed text color to black */
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        p {
+            font-size: 16px;
+            margin-top: 20px;
+            text-align: center;
+            color: white; /* Changed text color to black */
+        }
+
+        a {
+            text-decoration: none;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div id="iqhb">Institut für <br>  Qualitätsentwicklung <br> im Land Bremen (IQHB)</div>
+    <div>
+        <h1 style=color:black;margin-left:150px>Anmelden</h1>
+        <form action="/schoolcordinator_login" method="post" style=margin-top:580px;color:black;margin-right:50px>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required><br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required><br>
+            <button type="submit">Anmelden</button>
+        </form>
+        
+    </div>
+</body>
+</html>

@@ -1,0 +1,221 @@
+<body>
+  <div class="menu-bar">
+    <h1>IQHB</h1>
+      <img class="logo-img" src="static/LALE 7.jpg" alt="Logo Image">
+    <div>
+      <p>Email: {{ session.email }}</p>  
+      <form id="logoutForm" action="/logout" method="POST">
+          <button id="logoutBtn" type="submit">Abmelden</button>
+          <button onclick="window.location.href='/class'" type="button">Go to main</button>
+      </form>
+    </div>
+  </div>
+  <div class="container">
+    <!-- Calendar container -->
+    <div class="box" id="calendarBox">
+      <h2 style="text-align: center;">Kalendar</h2>
+      <div id="calendar"></div>
+    </div>
+    <!-- Chosen dates container -->
+    <div class="chosen-dates box" id="chosenDatesBox">
+      <div class="chosen-dates-inner">
+        <div class="container-inner">
+        <p>
+          Bitte wählen Sie 3 Termine im Kalender aus, an denen die<br>
+          <b>LALE 7</b>&nbspTestung an Ihrer Schule stattfinden könnte.<br>
+          Es hat sich bewährt, LALE nicht vor 9 Uhr stattfinden zu<br>
+          lassen. Wir orientieren uns für den genauen Start gern an<br>
+          Ihrer Stundentafel. Bitte wählen Sie dafür nachfolgend die<br>
+          gewünschte Startzeit der LALE Testung aus.
+        </p>
+          <b>Ihre ausgewählten Termine</b><br><br>
+            <select id="time-select">
+                <option value="09:00">9:00 AM</option>
+                <option value="09:15">9:15 AM</option>
+                <option value="09:30">9:30 AM</option>
+                <option value="09:45">9:45 AM</option>
+                <option value="10:00">10:00 AM</option>
+                <option value="10:15">10:15 AM</option>
+                <option value="10:30">10:30 AM</option>
+                <option value="10:45">10:45 AM</option>
+                <option value="11:00">11:00 AM</option>
+                <option value="11:15">11:15 AM</option>
+                <option value="11:30">11:30 AM</option>
+                <option value="11:45">11:45 AM</option>
+            </select>
+            <ul id="chosen-dates-list"></ul>
+            <br><p>
+          Bitte beachten Sie die dadurch resultierenden Vor- und<br>
+          Nachbereitungszeiten für die an Ihrer Schule eingeteilten<br>
+          Testleitungen.<br><br>
+          Ein Testtag kann zum Beispiel wie folgt aussehen:<br><br>
+          08:15 – 09:00 Uhr Vorbereitungszeit Testleitungen (45 min)<br>
+          09:00 – 11:00 Uhr LALE Testung (inkl. Pause, 120 min)<br>
+          11:00 – 11:30 Uhr Nachbereitungszeit Testleitungen (30 min)
+        </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Function to fetch chosen dates from the server
+    function fetchChosenDates() {
+      $.ajax({
+        type: 'GET',
+        url: '/get_chosen_dates_7',
+        success: function(response) {
+          // Render the chosen dates on the dashboard
+          const chosenDatesList = $('#chosen-dates-list');
+          response.chosen_dates.forEach(date => {
+            // Format the date for display
+            const formattedDate = moment(date, 'YYYY-MM-DDTHH:mm:ss').format('YYYY-MM-DD [at] h:mm A');
+            // Append date, time, and remove button
+            chosenDatesList.append(`<li>${formattedDate} <button class="remove-btn" data-date="${date}">Remove</button></li>`);
+          });
+        },
+        error: function(error) {
+          console.error('Error fetching chosen dates:', error);
+        }
+      });
+    }
+
+    // Fetch chosen dates when the page loads
+    fetchChosenDates();
+
+    // Event listener for remove button click
+        $('#chosen-dates-list').on('click', '.remove-btn', function() {
+          const dateToRemove = $(this).data('date');
+          removeChosenDate(dateToRemove, $(this).closest('li'));
+        });
+        
+        // Function to remove chosen date and time
+        function removeChosenDate(dateToRemove, listItemToRemove) {
+          $.ajax({
+            type: 'POST',
+            url: '/remove_date_7', // Update with your Flask route for removing date
+            data: { date: dateToRemove },
+            success: function(response) {
+              if (response.success) {
+                // Remove the corresponding date and time from the list
+                listItemToRemove.remove();
+              } else {
+                alert('Failed to remove date.');
+              }
+            },
+            error: function() {
+              alert('Error occurred while removing date.');
+            }
+          });
+        }
+
+        const calendarEl = document.getElementById('calendar');
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            height: 'auto',
+            width: 'auto',
+            dateClick: function(info) {
+                const chosenDate = info.date;
+                const startDate = new Date('2024-08-04');
+                const endDate = new Date('2024-08-23');
+                const timeSelect = document.getElementById('time-select');
+                const chosenTime = timeSelect.options[timeSelect.selectedIndex].value;
+                const formattedChosenDate = moment(chosenDate).format('YYYY-MM-DD');
+
+                if (chosenDate >= startDate && chosenDate <= endDate) {
+                    if (confirm(`Do you want to choose ${formattedChosenDate} at ${chosenTime}?`)) {
+                        // AJAX request to Flask backend
+                        $.ajax({
+                            type: 'POST',
+                            url: '/add_date_7',
+                            data: { date: formattedChosenDate, time: chosenTime },
+                            success: function(response) {
+                                if (response.success) {
+                                    $('#chosen-dates-list').append(`<li>${formattedChosenDate} at ${chosenTime} <button class="remove-btn" data-date="${formattedChosenDate}">Remove</button></li>`);
+                                } else {
+                                    alert('Failed to add date.');
+                                }
+                            },
+                            error: function() {
+                                alert('Error occurred while adding date.');
+                            }
+                        });
+                    }
+                } else {
+                    alert('Sie dürfen nur ein Datum zwischen dem 4. August 2024 und dem 23. August 2024 auswählen.');
+                }
+            }
+        });
+        calendar.render();
+    });
+</script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+    }
+
+    .menu-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #333;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    .menu-bar h1 {
+      margin: 0;
+    }
+
+    .menu-bar button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .menu-bar button:hover {
+      background-color: #0056b3;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .box {
+      width: 48%;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    #calendarBox,
+    #chosenDatesBox {
+      flex-grow: 1;
+    }
+      .logo-img {
+            position: center;
+            top: 20px; /* Adjust top position */
+            right: 20px; /* Adjust right position */
+            width: 200px; /* Adjust width */
+            height: auto; /* Maintain aspect ratio */
+        }
+  </style>
+</body>

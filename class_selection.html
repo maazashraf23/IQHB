@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Check</title>
+    <style>
+        #modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            z-index: 1001; /* Sit on top */
+        }
+
+        #modalContent {
+            background-color: #fefefe;
+            margin: 15% auto; /* 15% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* Could be more or less, depending on screen size */
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <button id="checkAccessBtn">Check Access for LALE 7</button>
+
+    <!-- The Modal -->
+    <div id="modal">
+        <div id="modalContent">
+            <span class="close">&times;</span>
+            <p id="errorMessage"></p>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('modal');
+        const btn = document.getElementById('checkAccessBtn');
+        const span = document.getElementsByClassName('close')[0];
+        const errorMessage = document.getElementById('errorMessage');
+
+        btn.onclick = function() {
+            fetch('/sc_class_7')
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    errorMessage.textContent = data.message; // Set the message in the modal
+                    modal.style.display = "block"; // Show the modal
+                } else {
+                    window.location.href = '/sc_dashboard_7';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        span.onclick = function() {
+            modal.style.display = "none"; // Close the modal
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none"; // Click outside the modal to close it
+            }
+        }
+    </script>
+</body>
+</html>

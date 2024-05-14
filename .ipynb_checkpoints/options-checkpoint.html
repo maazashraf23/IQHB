@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Options</title>
+    <style>
+        body {
+            background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.1)), url('static/LALE_main.webp');
+            background-size: cover; /* Ensures the background image covers the entire body */
+            background-repeat: no-repeat; /* Prevents the background image from repeating */
+            background-position: center center; /* Centers the background image */
+            background-color: black; /* Set background color to black */
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            color: white; /* Set text color to white */
+            position: relative;
+        }
+
+        .welcome-message {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 24px;
+            color: black;
+        }
+
+        .options-container {
+            text-align: center;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            margin-top:280px;
+        }
+
+        .option-button {
+            font-size: 24px;
+            padding: 20px 40px;
+            margin: 10px;
+            border: none;
+            border-radius: 10px;
+            background-color: black; /* Set button background color to black */
+            color: white; /* Set button text color to white */
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            outline: none;
+        }
+
+        .option-button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .option-button:active {
+            transform: scale(0.95);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="welcome-message">
+        Institut für <br>Qualitätsentwicklung <br>im Land Bremen (IQHB)
+    </div>
+    <div class="options-container">
+        <button class="option-button" onclick="window.location.href='/sc_login'">School Coordinator</button>
+        <button class="option-button" onclick="window.location.href='/haupttestleitung_login'">Haupttestleitung</button>
+        <button class="option-button" onclick="window.location.href='/testleitung_login'">Testleitung</button>
+    </div>
+</body>
+</html>

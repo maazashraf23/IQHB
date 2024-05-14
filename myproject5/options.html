@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Options</title>
+    <style>
+        body {
+            background-image: url('static/books-2596809_1280.jpg'), linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0.7)); /* Add background image and gradient */
+            background-color: black; /* Set background color to black */
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            color: white; /* Set text color to white */
+            flex-direction: column; /* Align items in a column */
+        }
+
+        .options-container {
+            text-align: center;
+        }
+
+        .option-button {
+            font-size: 24px;
+            padding: 20px 40px;
+            margin: 10px;
+            border: none;
+            border-radius: 10px;
+            background-color: black; /* Set button background color to black */
+            color: white; /* Set button text color to white */
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            outline: none;
+        }
+
+        .option-button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .option-button:active {
+            transform: scale(0.95);
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 150px; /* Adjust margin to move the text to the top */
+            color: black; /* Set heading text color to black */
+        }
+    </style>
+</head>
+<body>
+    <div class="options-container">
+        <h1>Welcome to IQHB</h1>
+        <button class="option-button" onclick="window.location.href='/sc_login'">School Coordinator</button>
+        <button class="option-button" onclick="window.location.href='/haupttestleitung_login'">Haupttestleitung</button>
+        <button class="option-button" onclick="window.location.href='/testleitung_login'">Testleitung</button>
+    </div>
+</body>
+</html>

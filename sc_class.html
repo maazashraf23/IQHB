@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Selection</title>
+    <style>
+        body {
+            background-color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            color: black; /* Changed text color to black */
+        }
+
+        #iqhb {
+            font-size: 20px;
+            margin-bottom:0px;
+            margin-right: 1650px;
+        }
+
+        .options-container {
+            text-align: center;
+            margin-top: 150px; /* Added margin to separate from header */
+        }
+
+        .option-button {
+            font-size: 24px;
+            padding: 20px 40px;
+            margin: 10px;
+            border: none;
+            border-radius: 10px;
+            background-color: black;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            outline: none;
+        }
+
+        .option-button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .option-button:active {
+            transform: scale(0.95);
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .logout-container {
+            margin-top: 40px; /* Increased margin-top to move the logout button further down */
+            display: block; /* Ensure logout container takes full width */
+        }
+
+        #logoutBtn {
+            font-size: 18px;
+            padding: 12px 20px;
+            border-radius: 5px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #logoutBtn:hover {
+            background-color: #0056b3;
+        }
+
+        #logoutBtn:active {
+            transform: scale(0.95);
+        }
+
+        .contact-info {
+            margin-top: 300px;
+            margin-right: 250px;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        /* Add style for the image */
+        .logo-img {
+            position: absolute;
+            top: 20px; /* Adjust top position */
+            right: 20px; /* Adjust right position */
+            width: 200px; /* Adjust width */
+            height: auto; /* Maintain aspect ratio */
+        }
+    </style>
+</head>
+<body>
+    <img class="logo-img" src="static/LALE_org.jpg" alt="Logo Image">
+    <div id="iqhb"><b>Institut für <br> Qualitätsentwicklung <br> im Land Bremen (IQHB)</b></div>
+    <div class="options-container">
+        <button class="option-button" onclick="window.location.href='/sc_dashboard_5'">LALE 5</button>
+        <button class="option-button" onclick="window.location.href='/sc_class_7'">LALE 7</button>
+    </div>
+    <div class="logout-container">
+        <form id="logoutForm" action="/logout" method="POST">
+            <button id="logoutBtn" type="submit">Abmelden</button>
+        </form>
+    </div>
+    <div class="contact-info">
+        <p>Bei Fragen oder Problemen erreichen Sie Frau Römer per Mail unter <a href="mailto:iqhb@iqhb.bremen.de">iqhb@iqhb.bremen.de</a>.</p>
+        <p>In dringenden Anliegen erreichen Sie Frau Römer telefonisch unter der Nummer: <a href="tel:+4942136121150">+49 421 361 21150</a> zu folgenden Zeiten: montags und freitags zwischen 10:00 – 12:00 Uhr und mittwochs und donnerstags zwischen 12:00 – 14:00 Uhr</p>
+    </div>
+</body>
+</html>

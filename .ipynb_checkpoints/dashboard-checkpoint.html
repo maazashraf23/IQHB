@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      display: flex;
+      justify-content: space-between;
+    }
+    .menu-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #333;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    .menu-bar h1 {
+      margin: 0;
+    }
+    .menu-bar button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .menu-bar button:hover {
+      background-color: #0056b3;
+    }
+    .box {
+      width: 48%;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .shifts-heading {
+      margin-bottom: 10px;
+    }
+    #shiftsTakenContainer,
+    #availableShiftsContainer {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .shift-btn {
+      margin-bottom: 10px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .shift-btn:hover {
+      background-color: #0056b3;
+    }
+    .shift-info {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+      width: 100%;
+    }
+    .shift-info p {
+      margin: 0;
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="menu-bar">
+    <h1>IQHB</h1>
+    <div>
+      <p>Email: {{ email }}</p>
+      <form id="logoutForm" action="/logout" method="POST">
+          <button id="logoutBtn" type="submit">Logout</button>
+      </form>
+    </div>
+  </div>
+  <div class="container">
+    <div class="box" id="shiftsBox">
+      <h2 class="shifts-heading">Your Shifts</h2>
+      <div id="shiftsTakenContainer">
+        {% if user_shifts %}
+            {% for shift in user_shifts %}
+                <div class="shift-info">
+                    <p class="date-info">Date: {{ shift.Date }}</p>
+                    <p class="school-info">School: {{ shift.School }}</p>
+                    <p class="class-info">Class: {{ shift.Class }}</p>
+                    <button class="remove-shift-btn" data-date="{{ shift.Date }}" data-school="{{ shift.School }}" data-class="{{ shift.Class }}">Remove Shift</button>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No shifts taken yet.</p>
+        {% endif %}
+      </div>
+      <h2 class="shifts-heading">Available Shifts</h2>
+      <div id="availableShiftsContainer"></div>
+    </div>
+    <div class="box" id="calendarBox">
+      <h2 style="text-align: center;">Calendar</h2>
+      <div id="calendar"></div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const calendarEl = document.getElementById('calendar');
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            height: 'auto',
+            width: 'auto',
+            dateClick: function(info) {
+                const selectedDate = moment(info.date).format('YYYY-MM-DD');
+                fetchShifts(selectedDate);
+            }
+        });
+        calendar.render();
+
+        function fetchShifts(selectedDate) {
+            $.ajax({
+                type: 'POST',
+                url: '/get_shifts',
+                data: JSON.stringify({ date: selectedDate }),
+                contentType: 'application/json',
+                success: function(response) {
+                    const shiftsTakenContainer = $('#shiftsTakenContainer');
+                    const availableShiftsContainer = $('#availableShiftsContainer');
+
+                    // Clear the available shifts container
+                    availableShiftsContainer.empty();
+
+                    response.shifts_info.forEach(shiftInfo => {
+                        if (shiftInfo.shift_taken) {
+                            // Append to shifts taken container
+                            const shiftElement = `
+                                <div class="shift-info">
+                                
+                                    <p class="school-info">School: ${shiftInfo.school}</p>
+                                    <p class="class-info">Class: ${shiftInfo.class}</p>
+                                </div>
+                            `;
+                            shiftsTakenContainer.append(shiftElement);
+                        } else {
+                            // Append to available shifts container
+                            const shiftElement = `
+                                <div class="shift-info">
+                                    <p class="school-info">School: ${shiftInfo.school}</p>
+                                    <p class="class-info">Class: ${shiftInfo.class}</p>
+                                    <button class="shift-btn" data-date="${selectedDate}" data-school="${shiftInfo.school}" data-class="${shiftInfo.class}">Take Shift</button>
+                                </div>
+                            `;
+                            availableShiftsContainer.append(shiftElement);
+                        }
+                    });
+                },
+                error: function(error) {
+                    console.error('Error fetching shifts:', error);
+                }
+            });
+        }
+
+        $('#shiftsBox').on('click', '.shift-btn', function() {
+            const selectedDate = $(this).data('date');
+            const school = $(this).data('school');
+            const class_ = $(this).data('class');
+
+            takeShift(selectedDate, school, class_);
+        });
+
+        function takeShift(selectedDate, school, class_) {
+            $.ajax({
+                type: 'POST',
+                url: '/take_shift',
+                data: JSON.stringify({ date: selectedDate, school: school, class: class_ }),
+                contentType: 'application/json',
+                success: function(response) {
+                    alert('Shift taken successfully!');
+                    fetchShifts(selectedDate); // Refresh shifts after taking one
+                },
+                error: function(error) {
+                    console.error('Error taking shift:', error);
+                }
+            });
+        }
+
+        $('#shiftsBox').on('click', '.remove-shift-btn', function() {
+        const selectedDate = $(this).data('date');
+        const school = $(this).data('school');
+        const class_ = $(this).data('class');
+
+        removeShift(selectedDate, school, class_);
+    });
+
+    function removeShift(selectedDate, school, class_) {
+        $.ajax({
+            type: 'POST',
+            url: '/remove_shift',
+            data: JSON.stringify({ date: selectedDate, school: school, class: class_ }),
+            contentType: 'application/json',
+            success: function(response) {
+                alert('Shift removed successfully!');
+                fetchShifts(selectedDate); // Refresh shifts after removing one
+            },
+            error: function(error) {
+                console.error('Error removing shift:', error);
+            }
+        });
+    }
+    });
+
+    // Logout button functionality
+    const logoutBtn = document.getElementById('logoutBtn');
+    const logoutForm = document.getElementById('logoutForm');
+
+    logoutBtn.addEventListener('click', function() {
+        fetch(logoutForm.action, {
+            method: 'POST',
+            body: new FormData(logoutForm),
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            if (response.redirected) {
+                window.location.href = response.url;
+            }
+        })
+        .catch(error => {
+            console.error('Error logging out:', error);
+        });
+    });
+  </script>
+</body>
+</html>
